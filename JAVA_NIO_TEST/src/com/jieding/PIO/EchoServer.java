@@ -1,43 +1,30 @@
-package com.jieding.BIO;
+package com.jieding.PIO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-/**
- * 
-* @ClassName: EchoServer 
-* @author JieDing dingjwilliams@gmail.com
-* 
-* @Description: 同步阻塞式I/O实现EchoServer BIO
- */
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 public class EchoServer {
 
 	public static void main(String[] args) {
-		ServerSocket serverSocket = null;
-		try{
-			serverSocket = new ServerSocket(8191);
-			System.out.println("Server is running");
-			Socket incoming = null;
+		// TODO Auto-generated method stub
+		try(ServerSocket server = new ServerSocket(8191)){
+			System.out.println("server is running");
+			EchoServerThreadPool singleExecutor = new EchoServerThreadPool(4, 1000);
+			Socket socket = null;
 			while(true){
-				incoming = serverSocket.accept();
-				new Thread(new EchoServerHandler(incoming)).start();
+				socket = server.accept();
+				singleExecutor.execute(new EchoServerHandler(socket));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally{
-			if(serverSocket!=null){
-				try {
-					serverSocket.close();
-					serverSocket = null;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -75,4 +62,17 @@ class EchoServerHandler implements Runnable{
 	}
 	
 	
+}
+
+
+class EchoServerThreadPool{
+	private ExecutorService executor;
+	public EchoServerThreadPool(int maxPoolSize, int queueSize){
+
+		executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), maxPoolSize, 120L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
+	}
+	
+	public void execute(Runnable task){
+		executor.execute(task);
+	}
 }
