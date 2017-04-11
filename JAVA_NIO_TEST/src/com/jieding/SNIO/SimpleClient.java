@@ -1,4 +1,4 @@
-package com.jieding.NIO;
+package com.jieding.SNIO;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

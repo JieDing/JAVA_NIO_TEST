@@ -1,4 +1,4 @@
-package com.jieding.BIO;
+package com.jieding.SBIO;
 
 import java.io.IOException;
 import java.net.Socket;
