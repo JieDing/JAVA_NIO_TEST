@@ -99,7 +99,7 @@ class SimpleClientHandle implements Runnable{
 					readBuffer.get(bytes);
 					String content = new String(bytes, "UTF-16BE");
 					System.out.println(content);
-					this.stop = true;
+					//this.stop = true;
 				}else if(readBytes<0){
 					key.cancel();
 					sc.close();
